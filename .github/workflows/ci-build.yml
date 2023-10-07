@@ -1,0 +1,54 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - source/sample-project/**
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - source/sample-project/**
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0.33
+        env:
+          MYSQL_ROOT_PASSWORD: Admin@123
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        image: redis:7.2.1-alpine3.18
+        env:
+          REDIS_PASSWORD: Redis@123
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Download SQL scripts
+        run: wget -O scripts.sql https://raw.githubusercontent.com/robert28893/java-coaching-lab/main/source/docker-compose/mysql/db-dumps/job_db.sql
+      - name: Import database
+        run: mysql -h 127.0.0.1 --port=3306 -u root -p"Admin@123" < scripts.sql
+      - name: Build and Test with Maven
+        env:
+          SPRING_DATASOURCE_URL: 'jdbc:mysql://localhost:3306/job_db'
+          SPRING_DATASOURCE_USERNAME: 'root'
+          SPRING_DATASOURCE_PASSWORD: 'Admin@123'
+          SPRING_JPA_HIBERNATE_DDLAUTO: 'none'
+          SPRING_DATA_REDIS_HOST: '127.0.0.1'
+          SPRING_DATA_REDIS_PORT: '6379'
+          SPRING_DATA_REDIS_PASSWORD: 'Redis@123'
+        run: ./mvnw -B package --file pom.xml
