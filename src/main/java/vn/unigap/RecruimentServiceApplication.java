@@ -9,6 +9,6 @@ public class RecruimentServiceApplication {
 	// chao anh huy
 	public static void main(String[] args) {
 		SpringApplication.run(RecruimentServiceApplication.class, args);
-	}
+	//}
 
 }
