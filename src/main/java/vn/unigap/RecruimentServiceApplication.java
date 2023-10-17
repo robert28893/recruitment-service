@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class RecruimentServiceApplication {
 
+	// chao anh huy
 	public static void main(String[] args) {
 		SpringApplication.run(RecruimentServiceApplication.class, args);
 	}
