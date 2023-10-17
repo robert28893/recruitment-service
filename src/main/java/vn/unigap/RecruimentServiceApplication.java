@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class RecruimentServiceApplication {
-
+	// add comment
 	public static void main(String[] args) {
 		SpringApplication.run(RecruimentServiceApplication.class, args);
 	}
